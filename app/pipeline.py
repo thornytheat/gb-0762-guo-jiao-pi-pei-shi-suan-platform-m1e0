@@ -4,7 +4,9 @@ from .modules.dry.service import convert
 from .modules.formula.contract import normalize
 from .modules.formula.service import inspect
 from .modules.blend.service import select
-from .modules.stock.balance import reconcile
+from .modules.resume.contract import normalize_resume
+from .modules.resume.service import resume_batch
+from .modules.stock.balance import reconcile, reconcile_actual
 
 
 def process(material, stage='archive'):
@@ -27,5 +29,15 @@ def process(material, stage='archive'):
     result['blend'] = select(plan, lots)
     if stage == 'blend':
         return result
-    result['stock'] = reconcile(plan, lots, result['blend'])
+    spec = material.get('resume')
+    if spec is not None:
+        result['resume'] = resume_batch(normalize_resume(spec, plan), plan, lots)
+    elif stage == 'resume':
+        result['resume'] = {'decision': 'NOT_REQUESTED'}
+    if stage == 'resume':
+        return result
+    if spec is not None:
+        result['stock'] = reconcile_actual(plan, lots, result['resume'])
+    else:
+        result['stock'] = reconcile(plan, lots, result['blend'])
     return result

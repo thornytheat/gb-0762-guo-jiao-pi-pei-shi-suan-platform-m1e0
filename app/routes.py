@@ -33,6 +33,11 @@ def blend():
     return preview('blend')
 
 
+@api.post('/resume')
+def resume():
+    return preview('resume')
+
+
 @api.post('/stock')
 def stock():
     return preview('stock')

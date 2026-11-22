@@ -1,0 +1,13 @@
+{% set r = data.resume %}
+{% if r.decision == 'NOT_REQUESTED' %}
+<section class="panel workstation"><h3>换秤续配</h3><p>未提供续配参数。选用“换秤续配样本”，或在自填资料中给出已投 JSON、新秤刻度与工单允差后再试算。</p></section>
+{% else %}
+<section class="panel workstation">
+  <div class="bench-head"><h3>{{ '补投可行 · 按新秤刻度续配' if r.decision == 'TOP_UP' else '停料待复核 · ' + r.reason }}</h3><span class="state {{ 'pass' if r.decision == 'TOP_UP' else 'fail' }}">{{ r.decision }}</span></div>
+  <dl class="kpis"><div><dt>已投 g</dt><dd>{{ r.delivered_g }}</dd></div><div><dt>补投 g</dt><dd>{{ r.topup_g }}</dd></div><div><dt>实投合计 g</dt><dd>{{ r.mass_g }}</dd></div><div><dt>干物 g</dt><dd>{{ r.dry_g }}</dd></div><div><dt>凝胶 SAG</dt><dd>{{ r.gel_sag or '—' }}</dd></div><div><dt>新增批次</dt><dd>{{ r.new_lots }}</dd></div></dl>
+  <p class="quantity">工单 {{ data.plan.target_g }} g · 允差 ±{{ r.tolerance_g }} g · 重量窗口 {{ r.window_g|join(' ~ ') }} g · 新秤刻度 {{ r.step_g }} g</p>
+  <details id="resume-proof"><summary>展开续配校验</summary><dl class="equations"><dt>可补投整步库存</dt><dd>{{ r.step_capacity_g }} g</dd><dt>搜索状态数</dt><dd>{{ r.visited }}</dd><dt>干物凝胶矩</dt><dd>{{ r.gel_moment }}</dd></dl></details>
+</section>
+<section class="panel"><h3>{{ '补投称量单' if r.decision == 'TOP_UP' else '已投实况' }}</h3><div class="sheet"><table><thead><tr><th>批号</th><th>原件行</th><th>已投 (g)</th><th>补投 (g)</th><th>实投 (g)</th><th>新秤步数</th><th>期末 (g)</th><th>备注</th></tr></thead><tbody>{% for row in r.rows %}<tr data-issued="{{ row.actual_g > 0 }}"><td>{{ row.lot }}</td><td>{{ row.line }}</td><td class="num">{{ row.delivered_g }}</td><td class="num">{{ row.topup_g }}</td><td class="num">{{ row.actual_g }}</td><td class="num">{{ row.steps }}</td><td class="num">{{ row.end_g }}</td><td>{{ row.codes|join(' · ') or '通过' }}</td></tr>{% else %}<tr><td colspan="8">桶内尚无实投。</td></tr>{% endfor %}</tbody></table></div><div class="checks">{% for key,label in {'mass':'重量窗口','dry':'干物下限','gel_low':'凝胶下界','gel_high':'凝胶上界'}.items() %}<span class="{{ 'pass' if r.checks[key] else 'fail' }}">{{ label }} {{ '合格' if r.checks[key] else '偏离' }}</span>{% endfor %}</div></section>
+{% if r.findings %}<section class="panel"><h3>已投核验</h3><div class="sheet"><table><thead><tr><th>批号</th><th>原件行</th><th>已投 (g)</th><th>约束失败</th></tr></thead><tbody>{% for row in r.findings %}<tr><td>{{ row.lot }}</td><td>{{ row.line or '—' }}</td><td class="num">{{ row.grams }}</td><td>{{ row.codes|join(' · ') or '通过' }}</td></tr>{% endfor %}</tbody></table></div></section>{% endif %}
+{% endif %}

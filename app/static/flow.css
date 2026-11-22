@@ -17,7 +17,7 @@ header { position: sticky; top: 0; z-index: 2; justify-content: space-between; m
 footer { position: sticky; bottom: 0; border-top: 1px solid var(--line); color: var(--ink-muted); font: 11px var(--font-num); }
 footer a { margin-left: auto; }
 main { display: grid; align-content: start; gap: var(--gap); min-width: 0; padding: 18px 22px; }
-.process { margin: 0; padding: 11px 9px; min-width: 0; display: grid; grid-template-columns: repeat(7,minmax(90px,1fr)); overflow-x: auto; list-style: none; background: var(--surface-2); border-radius: var(--radius); }
+.process { margin: 0; padding: 11px 9px; min-width: 0; display: grid; grid-template-columns: repeat(8,minmax(90px,1fr)); overflow-x: auto; list-style: none; background: var(--surface-2); border-radius: var(--radius); }
 .process li { position: relative; text-align: center; }
 .process a { display: grid; place-items: center; gap: 8px; font-size: 12px; text-decoration: none; color: var(--ink-muted); }
 .process i { background: var(--surface); border: 2px solid var(--line-strong); border-radius: 50%; width: 15px; height: 15px; z-index: 1; }

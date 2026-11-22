@@ -17,6 +17,8 @@ def sha(data):
 def manifest(material, results, start):
     assay_digest = sha(material['assays'].encode())
     settings = {'plan': material['plan'], 'proposal': material.get('proposal', {})}
+    if material.get('resume') is not None:
+        settings['resume'] = material['resume']
     handle = sha(canonical([REVISION, assay_digest, settings]))
     return {'batch_id': handle, 'rule': REVISION, 'assay_sha256': assay_digest, 'parameters': settings,
             'created_at': datetime.now(timezone.utc).isoformat(timespec='seconds'),

@@ -1,10 +1,13 @@
 <form class="materials" method="post">
-  <label for="trial-sample">试配资料</label><select name="sample" id="trial-sample"><option value="dirty" {{ 'selected' if mode == 'dirty' }}>来料争议样本</option><option value="clean" {{ 'selected' if mode == 'clean' }}>标准配方样本</option><option value="custom" {{ 'selected' if mode == 'custom' }}>自填资料</option></select>
+  <label for="trial-sample">试配资料</label><select name="sample" id="trial-sample"><option value="dirty" {{ 'selected' if mode == 'dirty' }}>来料争议样本</option><option value="clean" {{ 'selected' if mode == 'clean' }}>标准配方样本</option><option value="resume" {{ 'selected' if mode == 'resume' }}>换秤续配样本</option><option value="custom" {{ 'selected' if mode == 'custom' }}>自填资料</option></select>
   <button id="trial-run">{{ '留档或重跑' if stage == 'batches' else '重新试算' }}</button>
   <output id="pending" aria-live="polite"></output>
   <details id="trial-input" {% if mode == 'custom' %}open{% endif %}><summary>查看投料资料</summary>
     <div class="inputs">{% for key,label in fields.items() %}<label>{{ label }}<input name="{{ key }}" value="{{ form_plan.get(key, '') }}"></label>{% endfor %}
+    <label>新秤刻度 (g)<input name="resume_step_g" value="{{ form_resume.get('step_g', '') }}"></label>
+    <label>重量允差 (g)<input name="resume_tolerance_g" value="{{ form_resume.get('tolerance_g', '') }}"></label>
     <label class="wide">化验 CSV<textarea name="assays" rows="5">{{ form_assays }}</textarea></label>
-    <label class="wide">待验称量 JSON<textarea name="proposal" rows="2">{{ form_proposal }}</textarea></label></div>
+    <label class="wide">待验称量 JSON<textarea name="proposal" rows="2">{{ form_proposal }}</textarea></label>
+    <label class="wide">已投实投 JSON<textarea name="delivered" rows="2">{{ form_delivered }}</textarea></label></div>
   </details>
 </form>

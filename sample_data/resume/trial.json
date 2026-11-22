@@ -1,0 +1,1 @@
+{"plan":{"as_of":"2026-11-22","target_g":6000,"step_g":1500,"dry_min_g":5100,"gel_low_sag":148,"gel_high_sag":156},"proposal":{"PJ-21":1500,"PJ-22":3000,"PJ-23":1500},"resume":{"delivered":{"PJ-21":1500,"PJ-22":1500},"step_g":400,"tolerance_g":300}}

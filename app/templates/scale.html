@@ -1,7 +1,7 @@
-{% set blend = data.blend %}{% set stock = data.stock %}
+{% set blend = data.blend %}{% set stock = data.stock %}{% set act = data.get('resume') %}
 <section class="panel workstation">
-  <div class="bench-head"><h3>{{ '称量分配结果' if stage == 'blend' else '配方余量轨' }}</h3><span class="state {{ 'pass' if blend.status == 'FEASIBLE' else 'fail' }}">{{ blend.status }}</span></div>
-  <dl class="kpis"><div><dt>计划 g</dt><dd>{{ data.plan.target_g }}</dd></div><div><dt>领用刻度 g</dt><dd>{{ data.plan.step_g }}</dd></div><div><dt>选用批</dt><dd>{{ blend.batch_count }}</dd></div><div><dt>干物 g</dt><dd>{{ blend.dry_g or '—' }}</dd></div><div><dt>凝胶 SAG</dt><dd>{{ blend.gel_sag or '—' }}</dd></div></dl>
+  <div class="bench-head"><h3>{{ '称量分配结果' if stage == 'blend' else '配方余量轨' }}</h3><span class="state {{ 'pass' if (act.decision == 'TOP_UP' if act else blend.status == 'FEASIBLE') else 'fail' }}">{{ (act.decision if act.decision == 'TOP_UP' else act.reason) if act else blend.status }}</span></div>
+  <dl class="kpis"><div><dt>计划 g</dt><dd>{{ data.plan.target_g }}</dd></div><div><dt>{{ '新秤刻度 g' if act else '领用刻度 g' }}</dt><dd>{{ act.step_g if act else data.plan.step_g }}</dd></div><div><dt>{{ '实投批' if act else '选用批' }}</dt><dd>{{ act.actual|length if act else blend.batch_count }}</dd></div><div><dt>干物 g</dt><dd>{{ (act.dry_g if act else blend.dry_g) or '—' }}</dd></div><div><dt>凝胶 SAG</dt><dd>{{ (act.gel_sag if act else blend.gel_sag) or '—' }}</dd></div></dl>
   {% if stock %}<div class="remaining"><div>期初 {{ stock.begin_g }} g</div><div class="meter" title="领用 {{ stock.issued_g }} g，余量 {{ stock.end_g }} g"><meter min="0" max="{{ stock.begin_g or 1 }}" value="{{ stock.issued_g }}"></meter></div><div>余量 {{ stock.end_g }} g</div></div><p class="quantity">领用 {{ stock.issued_g }} g · 缺口 {{ stock.shortage_g }} g</p>{% endif %}
   <details id="blend-proof"><summary>展开配方校验</summary><dl class="equations"><dt>可分配整步库存</dt><dd>{{ blend.step_capacity_g }} g</dd><dt>搜索状态数</dt><dd>{{ blend.visited }}</dd><dt>干物凝胶矩</dt><dd>{{ blend.gel_moment or '—' }}</dd></dl></details>
 </section>

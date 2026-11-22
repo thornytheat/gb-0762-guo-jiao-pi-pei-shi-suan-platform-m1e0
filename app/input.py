@@ -6,7 +6,7 @@ from .errors import TrialError
 
 
 def load(mode):
-    if mode not in ('dirty', 'clean'):
+    if mode not in ('dirty', 'clean', 'resume'):
         raise TrialError('UNKNOWN_SAMPLE', 404)
     directory = DATA / mode
     return {'assays': (directory / 'assays.csv').read_text(encoding='utf-8'),
@@ -19,9 +19,9 @@ def from_request():
         raise TrialError('JSON_REQUIRED', 400)
     if 'sample' in body:
         materials = load(body['sample'])
-        if set(body) - {'sample', 'plan', 'proposal'}:
+        if set(body) - {'sample', 'plan', 'proposal', 'resume'}:
             raise TrialError('UNKNOWN_REQUEST_FIELD', 400)
         return {**materials, **{k: v for k, v in body.items() if k != 'sample'}}
-    if set(body) - {'assays', 'plan', 'proposal'} or not isinstance(body.get('assays'), str):
+    if set(body) - {'assays', 'plan', 'proposal', 'resume'} or not isinstance(body.get('assays'), str):
         raise TrialError('ASSAYS_REQUIRED', 400)
     return body
